@@ -1,4 +1,4 @@
-<x-layout titulo="Listar">
+<x-layout titulo="Criar Funcionario">
     <div class="main">
         <form class="form-group" method="POST" action="{{ route('funcionario.salvar') }}">
             @csrf

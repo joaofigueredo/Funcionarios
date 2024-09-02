@@ -9,10 +9,12 @@
         "barryvdh/laravel-dompdf": "^2.2",
         "carlos-meneses/laravel-mpdf": "^1.1",
         "laravel/framework": "^11.9",
+        "laravel/telescope": "^5.2",
         "laravel/tinker": "^2.9",
         "symfony/intl": "^7.1"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.13",
         "fakerphp/faker": "^1.23",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FuncionarioRequest;
 use App\Models\Cargo;
 use App\Models\Funcionario;
 use Barryvdh\DomPDF\Facade\PDF;
 use DateTime;
 use DateTimeZone;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use IntlDateFormatter;
@@ -19,6 +21,7 @@ class FuncionarioController extends Controller
         $funcionarios = DB::table('funcionarios')
             ->join('cargos', 'cargos.id', '=', 'funcionarios.cargo_id')
             ->select('funcionarios.id', 'funcionarios.nome', 'salario', 'cargos.nome as cargo')
+            ->orderBy('funcionarios.nome')
             ->get();
 
         return view('funcionario.index')->with('funcionarios', $funcionarios);
@@ -29,21 +32,20 @@ class FuncionarioController extends Controller
         $cargos = DB::table('cargos')
             ->select('id', 'nome')
             ->get();
-        // dd($cargos);
 
         return view('funcionario.criar')->with('cargos', $cargos);
     }
 
-    public function salvar(Request $request)
+    public function salvar(FuncionarioRequest $request)
     {
-        // dd($request->all());
+
         Funcionario::create([
             'nome' => $request->nome,
             'salario' => $request->salario,
             'cargo_id' => $request->cargo
         ]);
-
-        return to_route('funcionario.index');
+        return to_route('funcionario.index')
+            ->with('success', "'{$request->nome}' criado com sucesso!");
     }
 
     public function editar(Funcionario $funcionario)
@@ -51,8 +53,10 @@ class FuncionarioController extends Controller
         $cargos = DB::table('cargos')
             ->select('cargos.id', 'cargos.nome')
             ->get();
-        // dd($funcionario->nome);
-        return view('funcionario.editar')->with('funcionario', $funcionario)->with('cargos', $cargos);
+
+        return view('funcionario.editar')
+            ->with('funcionario', $funcionario)
+            ->with('cargos', $cargos);
     }
 
     public function atualizar(Request $request)
@@ -71,16 +75,14 @@ class FuncionarioController extends Controller
 
     public function deletar(Funcionario $funcionario)
     {
-        $apagado = Funcionario::where('id', $funcionario->id)->delete();
+        $apagado = Funcionario::where('id', $funcionario->id)
+            ->delete();
         return to_route('funcionario.index');
     }
 
-    public function pdf()
+    public function show(Funcionario $funcionario)
     {
-        $funcionarios = DB::table('funcionarios')
-            ->join('cargos', 'cargos.id', '=', 'funcionarios.cargo_id')
-            ->select('funcionarios.id', 'funcionarios.nome', 'salario', 'cargos.nome as cargo')
-            ->get();
+        $cargo = Cargo::where('id', $funcionario->cargo_id)->get();
 
         $dateTimeObj = new DateTime('now', new DateTimeZone('America/Sao_Paulo'));
         $data = IntlDateFormatter::formatObject(
@@ -89,11 +91,9 @@ class FuncionarioController extends Controller
             'pt/br'
         );
 
-        $pdf = PDF::loadview(
-            'funcionario.pdf',
-            ['funcionarios' => $funcionarios, 'data' => $data]
-        )->setPaper('a4', 'landscape');
-
-        return $pdf->download('funcionarios.pdf');
+        return view('funcionario.show')
+            ->with('funcionario', $funcionario)
+            ->with('cargo', $cargo[0])
+            ->with('data', $data);
     }
 }

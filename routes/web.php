@@ -26,5 +26,7 @@ Route::put('/funcionario/atualizar', [FuncionarioController::class, 'atualizar']
 Route::delete('/funcionario/{funcionario}/deletar', [FuncionarioController::class, 'deletar'])
     ->name('funcionario.deletar');
 
-Route::get('/funcionario/pdf', [FuncionarioController::class, 'pdf'])
-    ->name('funcionario.pdf');
+
+
+Route::get('/funcionarios/{funcionario}', [FuncionarioController::class, 'show'])
+    ->name('funcionario.show');

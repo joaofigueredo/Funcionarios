@@ -3,10 +3,10 @@
         <table class="table table-striped table-bordered">
             <thead>
                 <tr>
-                    <th scope="col">Id</th>
                     <th scope="col">Nome</th>
                     <th scope="col">Salario</th>
                     <th scope="col">Cargo</th>
+                    <th scope="col">#</th>
                     <th scope="col">#</th>
                     <th scope="col">#</th>
                 </tr>
@@ -14,7 +14,6 @@
             <tbody>
                 <tr>
                     @foreach($funcionarios as $funcionario)
-                    <th scope="row">{{ $funcionario->id }}</th>
                     <td>{{ $funcionario->nome }}</td>
                     <td>R$ {{ number_format($funcionario->salario, 2, ',', '.') }}</td>
                     <td>{{ $funcionario->cargo }}</td>
@@ -24,14 +23,11 @@
                         @method('DELETE')
                         <td><button class="botaoExcluir">X</button></td>
                     </form>
+                    <td><a class="botaoEditar" href="{{ route('funcionario.show', $funcionario->id) }}">contra-cheque</a></td>
                 </tr>
                 @endforeach
             </tbody>
 
         </table>
     </div>
-    <div>
-        <a href="{{ route('funcionario.pdf') }}" class="gerarPdf">Gerar PDF</a>
-    </div>
-
 </x-layout>
